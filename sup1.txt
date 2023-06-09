@@ -1,0 +1,177 @@
+#############Code Refactoring###########
+package test;
+
+public class XmlOutPutAnswer{
+	
+	private static final String XML_FILE = "students.xml";
+	private static final String ADDRESS = "No:116/2, Avenue Street, Colombo";
+	private static final String STREET = "Street";
+	private static final String STREET_VALUE = "Avenue Street";
+	private static final String NO = "116/2";
+	private static final String NO_ATTRIB = "No";
+	private static final String NAME_NODE = "Name";
+	private static final String EMPLOYEE_NODE = "Employee";
+	private static final String SCHOOL_NODE = "School";
+	private static final String STUDENT_NODE = "Students";
+	private static final String GENDER_NODE = "Gender";
+	private static final String ADDRESS_NODE = "Address";
+	private static final String NAME = "Nimal Perera";
+	private static final String GENDER_VALUE = "Male";
+	private static final String INITIALS = "Initials";
+	private static final String INITIALS_VALUE = "D. D.";
+	
+	
+	
+	public Document createDocument() throws ParserConfigurationException {
+	return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+	}
+	
+	public Element createElement(Document document, String element) {
+	return document.createElement(element);
+	}
+
+	public Attr createAttribute(Document document, String type, String value) 
+	{
+	Attr attribute = document.createAttribute(type);
+	attribute.setValue(value);
+	return attribute;
+	}
+	
+	public Element appendChild(Document document, Element element, String 
+	textNode) {
+	element.appendChild(document.createTextNode(textNode));
+	return element;
+	}
+	
+	public Element setAttributeForElement(Element element, Attr attribute) {
+	element.setAttributeNode(attribute);
+	return element;
+	}
+		
+	public void transformToXml(Document document) throws
+	TransformerFactoryConfigurationError, TransformerException {
+	Transformer transformer = 
+	TransformerFactory.newInstance().newTransformer();
+	DOMSource domSource = new DOMSource(document);
+	transformer.transform(domSource, new StreamResult(new
+	File(XML_FILE)));
+	transformer.transform(domSource, new StreamResult(System.out));
+	}
+
+	public void buildXmlFile() throws ParserConfigurationException, 
+	TransformerException {
+	Document document = createDocument();
+	Element department = createElement(document, SCHOOL_NODE);
+	document.appendChild(department);
+	Element employees = createElement(document, STUDENT_NODE);
+	department.appendChild(employees);
+	Element employee = createElement(document, EMPLOYEE_NODE);
+	employees.appendChild(employee);
+	employee = setAttributeForElement(employee, 
+	createAttribute(document, GENDER_NODE, GENDER_VALUE));
+	employee.appendChild(appendChild(document, 
+	setAttributeForElement(createElement(document, NAME_NODE),
+	createAttribute(document, INITIALS, INITIALS_VALUE)), 
+	NAME));
+	employee.appendChild(appendChild(document,
+	setAttributeForElement(
+	setAttributeForElement(createElement(document, ADDRESS_NODE),
+	createAttribute(document, 
+	NO_ATTRIB, NO)),
+	createAttribute(document, STREET, 
+	STREET_VALUE)),
+	ADDRESS));
+	transformToXml(document);
+	}
+}
+
+#####Genarics#####
+
+#####method ref->Object
+
+interface Ireference{
+	void display();
+}
+
+public class First{
+	public void myMethod() {
+		System.out.println("Instance Method");
+	}
+	
+	public static void main(String[] args) {
+		First first = new First();
+		Ireference ireference = first::myMethod;
+		ireference.display();
+	}
+}
+
+####Array
+
+public class First{
+	public static void main(String[] args) {
+		String[] stringArray = {"Sam" ,"Richard" ,"Ann","Udara"};
+		
+		Arrays.sort(stringArray,String::compareToIgnoreCase);
+		
+		for(String str:stringArray){
+			System.out.println(str);
+			
+		}
+	}
+}
+
+###Add to list6
+public class First{
+	public static void main(String[] args) {
+		List<String> fruits = new ArrayList<String>();
+		fruits.add("Apple");
+		fruits.add("Orange");
+		fruits.add("Mango");
+		
+		//method1
+		fruits.forEach((fruit)->System.out.println(fruit));
+		
+		//method2
+		fruits.forEach(System.out::println);
+			
+		}
+	}
+
+###List iteration
+public class LambdaList{
+	public static void main(String[] args) {
+		//old
+		List<Integer> list = Arrays.asList(1,2,3,4,5);
+		for(Integer n:list){
+			System.out.println(n);
+		}
+		
+		//New way
+		List<Integer> list2 = Arrays.asList(1,2,3,4,5);
+		list2.forEach((n)->System.out.println(n));
+		
+		//using ::
+		list.forEach(System.out::println);
+		
+	}
+	
+}
+
+##Lambda thread
+public class LambdaThread{
+	public static void main(String[] args) {
+		//old
+		new Thread(
+				new Runnable() {
+					
+					@Override
+					public void run() {
+						System.out.println("old way");
+						
+					}
+				}
+				).start();
+		//new
+		new Thread(()-> System.out.println("Lambda Creating")).start();
+}
+}
